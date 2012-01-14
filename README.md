@@ -37,7 +37,7 @@ Original author: Dominik Liebler
 License
 -------
 
-(The MIT License) FIXME (different license?)
+(The MIT License)
 
 Copyright (c) 2012 Dominik Liebler
 

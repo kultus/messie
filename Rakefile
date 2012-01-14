@@ -14,4 +14,6 @@ Bones {
   authors  'Dominik Liebler'
   email    'liebler.dominik@googlemail.com'
   url      'http://thewebdev.'
+  ignore_file  '.gitignore'
+  depend_on 'sanitize'
 }

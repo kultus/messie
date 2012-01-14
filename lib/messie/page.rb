@@ -1,3 +1,5 @@
+$:.unshift(File.dirname(__FILE__))
+
 # gems
 require 'rubygems'
 require 'sanitize'

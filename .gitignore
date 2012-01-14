@@ -2,4 +2,7 @@
 .idea
 
 # gem/bones
+announcement.txt
+coverage
+doc
 pkg
