@@ -1,0 +1,6 @@
+== 0.1.0 / 2012-01-14
+
+* 1 major enhancement
+  * Birthday!
+  * can now sanitize the HTML output and return plain text
+  * response code fixed, should be an integer
