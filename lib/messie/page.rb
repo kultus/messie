@@ -3,6 +3,7 @@ $:.unshift(File.dirname(__FILE__))
 # gems
 require 'rubygems'
 require 'sanitize'
+require 'nokogiri'
 
 # external
 require 'uri'
@@ -41,10 +42,11 @@ module Messie
     #
     #
     def text
-      return nil if @response.nil?
-
-      text = body.gsub(/<script(.|\s){1,}<\/script>/, '')
-      text.gsub!(/<style(.|\s){1,}<\/style>/, '')
+      doc = Nokogiri::HTML(body)
+      doc.xpath('//script').remove
+      doc.xpath('//style').remove
+      
+      text = doc.to_html.encode('UTF-8')
 
       Sanitize.clean(text)
     end
@@ -52,8 +54,17 @@ module Messie
     # get the response body
     # 
     def body
-      return nil if @response.nil?
-      @response.body.strip
+      if not @body.nil?
+        @body
+      elsif @response.nil?
+        nil
+      else
+        @response.body.strip
+      end
+    end
+
+    def body=(body)
+      @body = body
     end
 
     # get the response code

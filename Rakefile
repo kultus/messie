@@ -16,4 +16,5 @@ Bones {
   url      'http://thewebdev.'
   ignore_file  '.gitignore'
   depend_on 'sanitize'
+  depend_on 'nokogiri'
 }
