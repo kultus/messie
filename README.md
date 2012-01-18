@@ -6,6 +6,7 @@ Messie is a simple web crawler.
 Features
 --------
 
+* following HTTP forwards
 * sanitizing HTML content
 * return plain text from web pages
 
@@ -16,13 +17,15 @@ Examples
 
     page.response_code # => 200
     page.response_time # => 0.83234
-    page.body # => "<html> ... <h1>Foobar</h1>"
+    page.body # => "<html> <title>foo</title>... <h1>Foobar</h1>"
     page.text # => "Foobar ..."
+    page.title # => foo
 
 Requirements
 ------------
 
 * sanitize
+* nokogiri
 
 Install
 -------
@@ -32,7 +35,7 @@ Install
 Author
 ------
 
-Original author: Dominik Liebler
+Original author: Dominik Liebler <liebler.dominik@googlemail.com>
 
 License
 -------
