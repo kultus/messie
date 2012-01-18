@@ -13,7 +13,7 @@ Bones {
   name     'messie'
   authors  'Dominik Liebler'
   email    'liebler.dominik@googlemail.com'
-  url      'http://thewebdev.'
+  url      'https://github.com/domnikl/messie'
   ignore_file  '.gitignore'
   depend_on 'sanitize'
   depend_on 'nokogiri'
