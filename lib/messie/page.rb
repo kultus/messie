@@ -67,6 +67,15 @@ module Messie
       @body = body
     end
 
+    # get the title of the page
+    #
+    def title
+      return nil if body.nil?
+
+      doc = Nokogiri::HTML(body)
+      doc.xpath('//title').inner_html
+    end
+
     # get the response code
     #
     # :call-seq:
