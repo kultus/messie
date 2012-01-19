@@ -4,7 +4,7 @@ require 'test/unit'
 
 class TestPage < Test::Unit::TestCase
   def setup
-    @page = Messie::Page.crawl "http://www.google.de"
+    @page = Messie::Page.crawl "http://www.google.com"
   end
 
   def test_init
@@ -15,6 +15,22 @@ class TestPage < Test::Unit::TestCase
     assert_nil(page.body)
     assert_equal('', page.text)
     assert_nil(page.response_code)
+  end
+
+  def test_headers
+    page = Messie::Page.crawl "http://www.google.com" do
+      add_header 'Accept-Charset', 'iso-8859-1'
+    end
+
+    assert_equal('iso-8859-1', page.headers['Accept-Charset'])
+  end
+
+  def test_headers_magic
+    page = Messie::Page.crawl "http://www.google.com" do
+      accept_charset 'windows-1252'
+    end
+
+    assert_equal('windows-1252', page.headers['Accept-Charset'])
   end
 
   def test_response_code
@@ -36,6 +52,10 @@ class TestPage < Test::Unit::TestCase
 
     assert_no_match(/function/, @page.text)
   end
+
+  def test_title
+    assert_not_equal '', @page.title
+  end
   
   def test_manual_body
     page = Messie::Page.new "http://thewebdev.de"
@@ -54,5 +74,11 @@ class TestPage < Test::Unit::TestCase
     assert_no_match(/foo/, page.text)
     assert_match(/bar/, page.text)
     assert_no_match(/baz/, page.text)
+  end
+
+  def test_ssl
+    page = Messie::Page.crawl "https://www.github.com"
+
+    assert_match(/GitHub/, page.title)
   end
 end

@@ -1,7 +1,7 @@
 messie
 ===========
 
-Messie is a simple web crawler.
+Messie is a simple web crawler that crawls one page at a time.
 
 Features
 --------
@@ -9,11 +9,19 @@ Features
 * following HTTP forwards
 * sanitizing HTML content
 * return plain text from web pages
+* crawl SSL pages
+* set request headers
 
 Examples
 --------
 
-    page = Messie::Page.crawl "http://www.google.de"
+    page = Messie::Page.crawl "http://www.google.de" do
+      # these responds to method_missing, so any header key
+      # might be allowed here
+
+      accept_charset 'utf-8'
+      accept 'text/html'
+    end
 
     page.response_code # => 200
     page.response_time # => 0.83234

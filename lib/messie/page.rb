@@ -16,16 +16,32 @@ module Messie
   class Page
     # create a new object and crawl the page
     #
-    def self.crawl uri
+    def self.crawl uri, &block
       obj = self.new uri
+
+      if block_given?
+        obj.instance_eval(&block)
+      end
+
       obj.crawl
       obj
     end
 
-    attr_reader :uri, :response_time
+    attr_reader :uri, :response_time, :headers
 
+    # sets a few standard headers, that can be overwritten
+    #
     def initialize uri
       @uri = URI.parse(uri)
+      @response = nil
+      @body = nil
+
+      @headers = {
+        'User-Agent' => Messie::UserAgent.new.to_s,
+        'Accept-Charset' => 'utf-8',
+        'Accept' => 'text/html,application/xhtml-xml,application/xml',
+        'Cache-Control' => 'max-age=0'
+      }
     end
 
     # get the response of the crawling
@@ -63,6 +79,8 @@ module Messie
       end
     end
 
+    # setter for body
+    #
     def body=(body)
       @body = body
     end
@@ -85,6 +103,22 @@ module Messie
       @response.code.to_i
     end
 
+    # set a HTTP request header
+    #
+    def add_header key, value
+      @headers[key] =value
+    end
+
+    # method missing to respond to setting of headers
+    # with dynamic methods
+    #
+    def method_missing(m, *args, &block)
+      key = m.to_s.split('_').map {|x| x.capitalize }.join('-')
+      value = args.shift
+
+      add_header(key, value)
+    end
+
     private
 
     def request_path
@@ -102,10 +136,18 @@ module Messie
 
       start = Time.new
       req = Net::HTTP::Get.new(request_path)
-      req.add_field('Usage-Agent', Messie::UserAgent.new.to_s)
+
+      # set headers
+      @headers.each do |key, value|
+        req[key] = value
+      end
 
       response = nil
-      Net::HTTP.new(@uri.host, @uri.port).start do |http|
+
+      http_request = Net::HTTP.new(@uri.host, @uri.port)
+      http_request.use_ssl = @uri.scheme == 'https'
+
+      http_request.start do |http|
         response = http.request(req)
       end
       stop = Time.new
