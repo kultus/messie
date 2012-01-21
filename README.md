@@ -8,9 +8,9 @@ Features
 
 * following HTTP forwards
 * sanitizing HTML content
-* return plain text from web pages
-* crawl SSL pages
-* set request headers
+* return plain text (with HTML tags removed) from web pages
+* crawl SSL encrypted pages
+* set your own request headers
 
 Examples
 --------

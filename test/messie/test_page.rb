@@ -8,29 +8,13 @@ class TestPage < Test::Unit::TestCase
   end
 
   def test_init
-    page = Messie::Page.new "http://www.google.de"
+    page = Messie::Page.new({:uri => "http://www.google.de"})
 
     assert_instance_of(URI::HTTP, page.uri)
     assert_nil(page.response_time)
     assert_nil(page.body)
-    assert_equal('', page.text)
+    assert_nil(page.text)
     assert_nil(page.response_code)
-  end
-
-  def test_headers
-    page = Messie::Page.crawl "http://www.google.com" do
-      add_header 'Accept-Charset', 'iso-8859-1'
-    end
-
-    assert_equal('iso-8859-1', page.headers['Accept-Charset'])
-  end
-
-  def test_headers_magic
-    page = Messie::Page.crawl "http://www.google.com" do
-      accept_charset 'windows-1252'
-    end
-
-    assert_equal('windows-1252', page.headers['Accept-Charset'])
   end
 
   def test_response_code
@@ -58,7 +42,7 @@ class TestPage < Test::Unit::TestCase
   end
   
   def test_manual_body
-    page = Messie::Page.new "http://thewebdev.de"
+    page = Messie::Page.new({:uri => "http://www.google.de"})
     page.body = 'foobar'
     assert_equal 'foobar', page.body
   end
@@ -66,7 +50,7 @@ class TestPage < Test::Unit::TestCase
   def test_text_multiple_scripts
     body = 'This is Sparta! <script>foo</script> bar <script>baz</script>'
     
-    page = Messie::Page.new "http://thewebdev.de"
+    page = Messie::Page.new({:uri => "http://www.google.de"})
     page.body = body
     
     assert_equal body, page.body

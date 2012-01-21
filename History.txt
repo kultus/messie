@@ -1,7 +1,11 @@
-== 0.3.0 / 2012-02-19
+== 0.3.1 / 2012-01-21
+
+* Refactored the messy page class and introduced a request and a response class
+
+== 0.3.0 / 2012-01-19
 
 * SSL requests are now working correctly
-* headers can easily set by providing a block to Messie::Page.crawl
+* headers can easily be set by providing a block to Messie::Page.crawl
 
 == 0.2.1 / 2012-01-15
 
