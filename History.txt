@@ -1,3 +1,8 @@
+== 0.4.0 / 2012-02-04
+
+* get all links a page contains with page.links
+* directly access the page's content with Nokogiri
+
 == 0.3.1 / 2012-01-21
 
 * Refactored the messy page class and introduced a request and a response class
