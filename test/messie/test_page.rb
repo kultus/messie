@@ -15,6 +15,8 @@ class TestPage < Test::Unit::TestCase
     assert_nil(page.body)
     assert_nil(page.text)
     assert_nil(page.response_code)
+    assert_equal([], page.links)
+    assert @page.nokogiri.instance_of? Nokogiri::HTML::Document
   end
 
   def test_response_code
@@ -27,7 +29,7 @@ class TestPage < Test::Unit::TestCase
 
   def test_body
     assert_not_nil(@page.body)
-    assert_match(/<html>/, @page.body)
+    assert_match(/<html/, @page.body)
   end
 
   def test_text
@@ -50,9 +52,8 @@ class TestPage < Test::Unit::TestCase
   def test_text_multiple_scripts
     body = 'This is Sparta! <script>foo</script> bar <script>baz</script>'
     
-    page = Messie::Page.new({:uri => "http://www.google.de"})
-    page.body = body
-    
+    page = Messie::Page.new({:uri => "http://www.google.de", :body => body})
+
     assert_equal body, page.body
     
     assert_no_match(/foo/, page.text)
@@ -64,5 +65,18 @@ class TestPage < Test::Unit::TestCase
     page = Messie::Page.crawl "https://www.github.com"
 
     assert_match(/GitHub/, page.title)
+  end
+
+  def test_links
+    page_content = File.read(File.join(File.dirname(__FILE__), %w{.. fixtures sample_page.html}))
+
+    page = Messie::Page.new({:uri => 'http://www.foo.de/sample_page.html', :body => page_content})
+
+    links = %w{https://rubygems.org/gems/messie https://github.com/domnikl/messie}
+    assert_equal(links, page.links)
+  end
+
+  def test_nokogiri
+    assert @page.nokogiri.instance_of? Nokogiri::HTML::Document
   end
 end

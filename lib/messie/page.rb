@@ -54,7 +54,7 @@ module Messie
     def text
       return nil if @body.nil?
 
-      doc = Nokogiri::HTML(@body)
+      doc = nokogiri
       doc.xpath('//script').remove
       doc.xpath('//style').remove
       
@@ -71,11 +71,26 @@ module Messie
       @body.to_s.strip
     end
 
+    # get all hyperlinks on the page
+    #
+    def links
+      return [] if body.nil?
+
+      find_links.delete_if do |x|
+        x =~ /^mailto\:/
+      end
+    end
+
     # get the title of the page
     #
     def title
-      doc = Nokogiri::HTML(body)
-      doc.xpath('//title').inner_html
+      nokogiri.xpath('//title').inner_html
+    end
+
+    # get a nokogiri object of the page's body
+    #
+    def nokogiri
+      Nokogiri::HTML(body)
     end
 
     # get the response code
@@ -85,5 +100,19 @@ module Messie
     def response_code
       @code
     end
+
+    protected
+
+    # get ALL links from the body section of the page
+    #
+    def find_links
+      links = []
+      nokogiri.xpath('//body/a').each do |link|
+        links << link['href'] if link['href']
+      end
+
+      links
+    end
+
   end
 end
