@@ -31,7 +31,7 @@ Examples
     page.text          # => "Foobar ..."
     page.title         # => foo
     page.links         # => ['http://www.google.com', 'http://www.foobar.com']
-    page.nokogiri      # => <Nokogiri::Document>
+    page.nokogiri      # => <Nokogiri::HTML::Document>
 
 Requirements
 ------------
