@@ -18,7 +18,7 @@ Examples
 --------
 
     page = Messie::Page.crawl "http://www.google.de" do
-      # these responds to method_missing, so any header key
+      # these respond to method_missing, so any header key
       # might be allowed here
 
       accept_charset 'utf-8'
