@@ -17,21 +17,23 @@ Features
 Examples
 --------
 
-    page = Messie::Page.crawl "http://www.google.de" do
-      # these respond to method_missing, so any header key
-      # might be allowed here
+```ruby
+page = Messie::Page.crawl "http://www.google.de" do
+    # these respond to method_missing, so any header key
+    # might be allowed here
 
-      accept_charset 'utf-8'
-      accept 'text/html'
-    end
+    accept_charset 'utf-8'
+    accept 'text/html'
+end
 
-    page.response_code # => 200
-    page.response_time # => 0.83234
-    page.body          # => "<html> <title>foo</title>... <h1>Foobar</h1>"
-    page.text          # => "Foobar ..."
-    page.title         # => foo
-    page.links         # => ['http://www.google.com', 'http://www.foobar.com']
-    page.nokogiri      # => <Nokogiri::HTML::Document>
+page.response_code # => 200
+page.response_time # => 0.83234
+page.body          # => "<html> <title>foo</title>... <h1>Foobar</h1>"
+page.text          # => "Foobar ..."
+page.title         # => foo
+page.links         # => ['http://www.google.com', 'http://www.foobar.com']
+page.nokogiri      # => <Nokogiri::Document>
+```
 
 Requirements
 ------------
@@ -42,7 +44,7 @@ Requirements
 Install
 -------
 
-* sudo gem install messie
+* `[sudo] gem install messie`
 
 Author
 ------
