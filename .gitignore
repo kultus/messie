@@ -1,5 +1,6 @@
 # RubyMine
 .idea
+*.gemspec
 
 # gem/bones
 announcement.txt
