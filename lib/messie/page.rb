@@ -8,6 +8,8 @@ require 'nokogiri'
 # external
 require 'uri'
 require 'net/http'
+require 'net/https'
+require 'time'
 
 # internal
 require 'request'
@@ -24,7 +26,6 @@ module Messie
       end
 
       response = request.crawl
-
       page = response.to_h.merge({:uri => URI.parse(uri)})
 
       obj = self.new(page)
@@ -47,6 +48,7 @@ module Messie
       @body = data[:body]
       @code = data[:code]
       @response_time = data[:time]
+      @headers = data[:headers]
     end
 
     # return plain text of the page
@@ -102,6 +104,22 @@ module Messie
       @code
     end
 
+    # last modified timestamp
+    def last_modified
+      return nil unless self[:last_modified]
+      Time.parse(self[:last_modified])
+    end
+
+    # Entity Tag
+    def etag
+      self[:etag]
+    end
+
+    # is the page cached on the server?
+    def cached?
+      last_modified || etag
+    end
+
     protected
 
     # get ALL links from the body section of the page
@@ -115,5 +133,12 @@ module Messie
       links
     end
 
+    # read headers
+    def [](header_key)
+      return nil if @headers.nil?
+      return nil unless @headers.has_key? header_key
+
+      @headers[header_key]
+    end
   end
 end
