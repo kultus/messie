@@ -85,7 +85,8 @@ module Messie
             {
                 :time => @response_time,
                 :body => response.body,
-                :code => response.code.to_i
+                :code => response.code.to_i,
+                :last_modified => response['Last-Modified']
             }
         )
       when Net::HTTPRedirection
