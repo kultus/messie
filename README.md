@@ -48,6 +48,7 @@ page = Messie::Page.crawl "http://www.google.de" do
 end
 
 page.changed? # => false
+page.cached? # => true, the resource is being cached by the server
 page.etag # => "1edec-3e3073913b101"
 page.last_modified # => #<Time>
 ```
