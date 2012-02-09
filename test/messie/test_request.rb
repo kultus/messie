@@ -4,7 +4,7 @@ require 'test/unit'
 
 class TestRequest < Test::Unit::TestCase
   def setup
-    @request = Messie::Request.new "http://www.google.com"
+    @request = Messie::Request.new "http://localhost:4567"
   end
 
   def test_headers
@@ -18,7 +18,7 @@ class TestRequest < Test::Unit::TestCase
   end
 
   def test_complete_crawl_stack
-    page = Messie::Page.crawl "http://www.google.com" do
+    page = Messie::Page.crawl "http://localhost:4567" do
       accept_charset 'utf-8'
     end
 
