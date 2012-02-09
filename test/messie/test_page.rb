@@ -18,6 +18,7 @@ class TestPage < Test::Unit::TestCase
     assert_nil(page.response_code)
     assert_equal([], page.links)
     assert !page.cached?
+    assert_nil page.changed?
     assert @page.nokogiri.instance_of? Nokogiri::HTML::Document
   end
 
@@ -87,5 +88,13 @@ class TestPage < Test::Unit::TestCase
     assert_equal "1edec-3e3073913b100", page.etag
 
     assert page.cached?
+  end
+
+  def test_changed?
+    page = Messie::Page.crawl "http://localhost:4567"
+    assert page.changed?
+
+    page = Messie::Page.crawl "http://localhost:4567/cached"
+    assert !page.changed?
   end
 end

@@ -120,6 +120,13 @@ module Messie
       last_modified || etag
     end
 
+    # was the page modified since the last request to it?
+    # => HTTP Status 304 Not Modified?
+    def changed?
+      return nil if @code.nil?
+      @code != 304
+    end
+
     protected
 
     # get ALL links from the body section of the page
