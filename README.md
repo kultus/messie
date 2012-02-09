@@ -6,13 +6,14 @@ Messie is a simple web crawler that crawls one page at a time.
 Features
 --------
 
-* following HTTP forwards (max 3 levels deep)
-* sanitizing HTML content
-* get all links a page contains to continue crawling
+* follows HTTP redirects (max 5 levels deep)
+* get all links a page contains to continue crawling recursively
+* supports caching of pages
 * return plain text from web pages
 * crawl SSL encrypted pages
 * set your own request headers via a fancy API
-* directly access the pages content with Nokogiri
+* directly access the page's content with Nokogiri
+* records the response time of every crawled page
 
 Examples
 --------
@@ -28,7 +29,7 @@ end
 
 page.response_code # => 200
 page.response_time # => 0.83234
-page.body          # => "<html> <title>foo</title>... <h1>Foobar</h1>"
+page.body          # => "<html><title>foo</title>... <h1>Foobar</h1>"
 page.text          # => "Foobar ..."
 page.title         # => foo
 page.links         # => ['http://www.google.com', 'http://www.foobar.com']
