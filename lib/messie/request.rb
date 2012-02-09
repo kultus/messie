@@ -81,15 +81,11 @@ module Messie
 
       case response
       when Net::HTTPSuccess
-        Messie::Response.new(
-            {
-                :time => @response_time,
-                :body => response.body,
-                :code => response.code.to_i
-            }
-        )
+        Messie::Response.create(response, @response_time)
+      when Net::HTTPNotModified
+        Messie::Response.create(response, @response_time)
       when Net::HTTPRedirection
-        @uri = URI.parse(response['location'])
+        @uri = URI.parse(response['Location'])
         crawl_and_follow(limit - 1)
       else
         response.error!

@@ -35,6 +35,23 @@ page.links         # => ['http://www.google.com', 'http://www.foobar.com']
 page.nokogiri      # => <Nokogiri::Document>
 ```
 
+Caching
+=======
+
+When it comes to caching pages, messie takes a lot of work from you. All you have to do is to persist
+`page.last_modified` and `page.etag` and provide them on your next call to `Messie::Page.crawl`.
+
+```ruby
+page = Messie::Page.crawl "http://www.google.de" do
+  if_modified_since Time.now
+  if_none_match "1edec-3e3073913b101"
+end
+
+page.changed? # => false
+page.etag # => "1edec-3e3073913b101"
+page.last_modified # => #<Time>
+```
+
 Requirements
 ------------
 
