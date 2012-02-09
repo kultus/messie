@@ -26,3 +26,9 @@ get '/cached' do
     "Expires" => "Fri, 10 Feb 2012 01:59:35 GMT"
   body "this was cached"
 end
+
+get '/redirect' do
+  status 301 # Moved Permanently
+  headers \
+    "Location" => 'http://localhost:4567'
+end

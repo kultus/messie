@@ -24,4 +24,12 @@ class TestRequest < Test::Unit::TestCase
 
     assert_not_equal('', page.body)
   end
+
+  def test_redirect
+    page = Messie::Page.crawl "http://localhost:4567/redirect"
+
+    assert_equal 'http://localhost:4567', page.uri.to_s
+    assert_equal 200, page.response_code
+    assert_equal 'Test Page', page.title
+  end
 end

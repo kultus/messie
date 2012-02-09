@@ -2,15 +2,17 @@ module Messie
 
   # a crawled response
   class Response
-    attr_reader :code, :body, :time, :headers
+    attr_reader :code, :body, :time, :headers, :uri
 
-    def self.create(response, response_time)
+    # factory method to create from net/http response
+    def self.create(uri, response, response_time)
       headers = {}
       response.each_header do |key, value|
         headers[key.to_s.downcase.gsub('-', '_').to_sym] = value
       end
 
       self.new({
+        :uri  => uri,
         :time => response_time.to_f,
         :body => response.body,
         :code => response.code.to_i,
@@ -20,6 +22,7 @@ module Messie
 
     #
     def initialize(data={})
+      @uri = data[:uri]
       @code = data[:code]
       @time = data[:time]
       @body = data[:body]
@@ -29,6 +32,7 @@ module Messie
     # convert to a hash
     def to_h
       {
+        :uri  => @uri,
         :code => @code,
         :body => @body,
         :time => @time,

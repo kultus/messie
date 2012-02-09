@@ -19,14 +19,15 @@ module Messie
     # create a new object and crawl the page
     #
     def self.crawl uri, &block
-      request = Messie::Request.new URI.parse(uri)
+      uri = URI.parse(uri)
+      request = Messie::Request.new uri
 
       if block_given?
         request.instance_eval(&block)
       end
 
-      response = request.crawl
-      page = response.to_h.merge({:uri => URI.parse(uri)})
+      page = request.crawl.to_h
+      page[:uri] ||= uri
 
       obj = self.new(page)
       obj
