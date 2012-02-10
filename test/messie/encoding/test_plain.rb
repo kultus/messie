@@ -3,7 +3,7 @@ require 'encoding/plain'
 require 'test/unit'
 
 class TestEncodingPlain < Test::Unit::TestCase
-  def decode
+  def test_decode
     content = "foobar"
     assert_equal content, Messie::Encoding::Plain.new(content).decode
   end
