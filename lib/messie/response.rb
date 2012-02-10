@@ -61,7 +61,7 @@ module Messie
     # search for the correct algorithm class
     #
     def self.lookup_decoder(algorithm)
-      return Messie::Encoding::Plain if algorithm.to_s.empty?
+      return Messie::Encoding::Plain if algorithm.empty?
 
       begin
         algorithm = Messie::Encoding.const_get algorithm.capitalize.to_sym
@@ -69,7 +69,12 @@ module Messie
         algorithm = Messie::Encoding::Plain
       end
 
-      unless algorithm.instance_methods.include? :decode
+      method_name = :decode
+      if 1.8 == RUBY_VERSION.to_f
+        method_name = method_name.to_s
+      end
+
+      unless algorithm.instance_methods.include? method_name
         algorithm = Messie::Encoding::Plain
       end
 
