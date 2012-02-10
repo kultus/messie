@@ -61,7 +61,7 @@ module Messie
     # search for the correct algorithm class
     #
     def self.lookup_decoder(algorithm)
-      return Messie::Encoding::Plain if algorithm.empty?
+      return Messie::Encoding::Plain if algorithm.to_s.empty?
 
       begin
         algorithm = Messie::Encoding.const_get algorithm.capitalize.to_sym
