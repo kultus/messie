@@ -12,7 +12,7 @@ module Messie
     attr_reader :code, :body, :time, :headers, :uri
 
     # factory method to create from net/http response
-    def self.create(uri, response, response_time)
+    def self.create(uri, response, response_time, request_headers)
       headers = {}
       response.each_header do |key, value|
         headers[key.to_s.downcase.gsub('-', '_').to_sym] = value
@@ -25,7 +25,8 @@ module Messie
         :time => response_time.to_f,
         :body => body,
         :code => response.code.to_i,
-        :headers => headers
+        :response_headers => headers,
+        :request_headers => request_headers
       })
     end
 
@@ -34,7 +35,8 @@ module Messie
       @code = data[:code]
       @time = data[:time]
       @body = data[:body]
-      @headers = data[:headers]
+      @headers = data[:response_headers]
+      @request_headers = data[:request_headers]
     end
 
     # convert to a hash
@@ -44,7 +46,8 @@ module Messie
         :code => @code,
         :body => @body,
         :time => @time,
-        :headers => @headers
+        :response_headers => @headers,
+        :request_headers => @request_headers
       }
     end
 

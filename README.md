@@ -9,11 +9,13 @@ Features
 * follows HTTP redirects (max 5 levels deep)
 * get all links a page contains to continue crawling recursively
 * supports caching of pages
+* decompression of gzip or deflate compressed is completely handled by messie
 * return plain text from web pages
 * crawl SSL encrypted pages
 * set your own request headers via a fancy API
 * directly access the page's content with Nokogiri
 * records the response time of every crawled page
+* contains a CLI tool that uses the complete API
 
 Examples
 --------

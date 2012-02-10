@@ -49,7 +49,8 @@ module Messie
       @body = data[:body]
       @code = data[:code]
       @response_time = data[:time]
-      @headers = data[:headers]
+      @response_headers = data[:response_headers]
+      @request_headers = data[:request_headers]
     end
 
     # return plain text of the page
@@ -64,7 +65,7 @@ module Messie
 
       text = doc.to_html.encode_to_utf8
 
-      Sanitize.clean(text)
+      Sanitize.clean(text).strip
     end
 
     # get the response body
@@ -128,6 +129,20 @@ module Messie
       @code != 304
     end
 
+    def response_headers
+      headers = {}
+      @response_headers.each do |key,value|
+        key = key.to_s.split('_').map {|x| x.capitalize }.join('-')
+        headers[key] = value
+      end
+
+      headers
+    end
+
+    def request_headers
+      @request_headers
+    end
+
     protected
 
     # get ALL links from the body section of the page
@@ -143,10 +158,10 @@ module Messie
 
     # read headers
     def [](header_key)
-      return nil if @headers.nil?
-      return nil unless @headers.has_key? header_key
+      return nil if @response_headers.nil?
+      return nil unless @response_headers.has_key? header_key
 
-      @headers[header_key]
+      @response_headers[header_key]
     end
   end
 end
