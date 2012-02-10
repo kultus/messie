@@ -1,6 +1,7 @@
 # this implements a lightweight test server
 # that is used for the unit tests
 
+require 'rubygems'
 require 'sinatra'
 
 get '/' do
