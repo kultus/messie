@@ -1,6 +1,7 @@
 # this implements a lightweight test server
 # that is used for the unit tests
 
+require 'rubygems'
 require 'sinatra'
 
 get '/' do
@@ -30,5 +31,6 @@ end
 get '/redirect' do
   status 301 # Moved Permanently
   headers \
-    "Location" => 'http://localhost:4567'
+    "Location" => "http://localhost:4567"
+  body "foo"
 end

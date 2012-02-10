@@ -13,6 +13,7 @@ require 'time'
 
 # internal
 require 'request'
+require 'string'
 
 module Messie
   class Page
@@ -61,8 +62,8 @@ module Messie
       doc = nokogiri
       doc.xpath('//script').remove
       doc.xpath('//style').remove
-      
-      text = doc.to_html.encode('UTF-8')
+
+      text = doc.to_html.encode_to_utf8
 
       Sanitize.clean(text)
     end
