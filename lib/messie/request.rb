@@ -18,7 +18,8 @@ module Messie
         'User-Agent' => Messie::UserAgent.new.to_s,
         'Accept-Charset' => 'utf-8',
         'Accept' => 'text/html,application/xhtml-xml,application/xml',
-        'Cache-Control' => 'max-age=0'
+        'Cache-Control' => 'max-age=0',
+        'Accept-Encoding' => 'gzip,deflate'
       }
 
       @uri = uri
