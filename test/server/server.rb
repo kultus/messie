@@ -31,5 +31,6 @@ end
 get '/redirect' do
   status 301 # Moved Permanently
   headers \
-    "Location" => 'http://localhost:4567'
+    "Location" => "http://localhost:4567"
+  body "foo"
 end
