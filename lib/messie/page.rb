@@ -34,7 +34,7 @@ module Messie
       obj
     end
 
-    attr_reader :uri, :response_time, :last_modified
+    attr_reader :uri, :response_time
     attr_writer :body
 
     # sets a few standard headers, that can be overwritten
@@ -46,7 +46,6 @@ module Messie
         @uri = data[:uri]
       end
 
-      @last_modified = data[:last_modified]
       @body = data[:body]
       @code = data[:code]
       @response_time = data[:time]
