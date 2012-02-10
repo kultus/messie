@@ -9,13 +9,19 @@ class TestResponse < Test::Unit::TestCase
     assert_nil(response.code)
     assert_nil(response.body)
     assert_nil(response.time)
+    assert_nil(response.headers)
+    assert_nil(response.uri)
   end
 
   def test_to_h
     data = {
       :body => 'Moved permanently',
+      :uri => nil,
       :code => 302,
-      :time => 0.93234
+      :time => 0.93234,
+      :headers => {
+        :last_modified => Time.now
+      }
     }
 
     response = Messie::Response.new(data)

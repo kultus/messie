@@ -1,3 +1,10 @@
+== 0.5.0 / 2012-02-10
+
+* added support for caching via Last-Modified and ETag headers
+* fixed some issues with SSL and Ruby 1.8.x
+* fixed wrong response time recording
+* unit tests are now independent through an internal Sinatra mockup server
+
 == 0.4.0 / 2012-02-04
 
 * get all links a page contains with page.links

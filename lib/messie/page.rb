@@ -8,30 +8,33 @@ require 'nokogiri'
 # external
 require 'uri'
 require 'net/http'
+require 'net/https'
+require 'time'
 
 # internal
 require 'request'
+require 'string'
 
 module Messie
   class Page
     # create a new object and crawl the page
     #
     def self.crawl uri, &block
-      request = Messie::Request.new URI.parse(uri)
+      uri = URI.parse(uri)
+      request = Messie::Request.new uri
 
       if block_given?
         request.instance_eval(&block)
       end
 
-      response = request.crawl
-
-      page = response.to_h.merge({:uri => URI.parse(uri)})
+      page = request.crawl.to_h
+      page[:uri] ||= uri
 
       obj = self.new(page)
       obj
     end
 
-    attr_reader :uri, :response_time
+    attr_reader :uri, :response_time, :last_modified
     attr_writer :body
 
     # sets a few standard headers, that can be overwritten
@@ -43,9 +46,11 @@ module Messie
         @uri = data[:uri]
       end
 
+      @last_modified = data[:last_modified]
       @body = data[:body]
       @code = data[:code]
       @response_time = data[:time]
+      @headers = data[:headers]
     end
 
     # return plain text of the page
@@ -57,8 +62,8 @@ module Messie
       doc = nokogiri
       doc.xpath('//script').remove
       doc.xpath('//style').remove
-      
-      text = doc.to_html.encode('UTF-8')
+
+      text = doc.to_html.encode_to_utf8
 
       Sanitize.clean(text)
     end
@@ -101,6 +106,29 @@ module Messie
       @code
     end
 
+    # last modified timestamp
+    def last_modified
+      return nil unless self[:last_modified]
+      Time.parse(self[:last_modified])
+    end
+
+    # Entity Tag
+    def etag
+      self[:etag]
+    end
+
+    # is the page cached on the server?
+    def cached?
+      last_modified || etag
+    end
+
+    # was the page modified since the last request to it?
+    # => HTTP Status 304 Not Modified?
+    def changed?
+      return nil if @code.nil?
+      @code != 304
+    end
+
     protected
 
     # get ALL links from the body section of the page
@@ -114,5 +142,12 @@ module Messie
       links
     end
 
+    # read headers
+    def [](header_key)
+      return nil if @headers.nil?
+      return nil unless @headers.has_key? header_key
+
+      @headers[header_key]
+    end
   end
 end
