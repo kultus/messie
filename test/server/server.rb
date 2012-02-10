@@ -14,10 +14,12 @@ end
 get '/links' do
   '<html>
     <body>
-        <a name="anchor">Anchor</a>
-        <a href="https://rubygems.org/gems/messie">Messie on Rubygems.org</a>
-        <a href="https://github.com/domnikl/messie">Messie on github</a>
-        <a href="mailto:foo@bar.com">Email</a>
+        <div>
+          <a name="anchor">Anchor</a>
+          <a href="https://rubygems.org/gems/messie">Messie on Rubygems.org</a>
+          <a href="https://github.com/domnikl/messie">Messie on github</a>
+          <a href="mailto:foo@bar.com">Email</a>
+        </div>
     </body>
   </html>'
 end
