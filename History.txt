@@ -1,3 +1,7 @@
+== 0.5.1 / 2012-02-10
+
+* fixed critical bug when retrieving list of links on a page
+
 == 0.5.0 / 2012-02-10
 
 * added support for caching via Last-Modified and ETag headers

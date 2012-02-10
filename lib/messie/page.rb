@@ -135,7 +135,7 @@ module Messie
     #
     def find_links
       links = []
-      nokogiri.xpath('//body/a').each do |link|
+      nokogiri.xpath('//a').each do |link|
         links << link['href'] if link['href']
       end
 
