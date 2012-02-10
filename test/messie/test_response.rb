@@ -19,9 +19,10 @@ class TestResponse < Test::Unit::TestCase
       :uri => nil,
       :code => 302,
       :time => 0.93234,
-      :headers => {
+      :response_headers => {
         :last_modified => Time.now
-      }
+      },
+      :request_headers => nil,
     }
 
     response = Messie::Response.new(data)
