@@ -14,6 +14,11 @@ class TestEncodingGzip < Test::Unit::TestCase
 
     assert_equal content, Messie::Encoding::Gzip.new(buffer.string).decode
   end
+
+  def test_from_server
+    page = Messie::Page.crawl "http://localhost:4567/gzip"
+    assert_equal "this is a gzipped string", page.body
+  end
 end
 
 

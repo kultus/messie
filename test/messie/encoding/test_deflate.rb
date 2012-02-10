@@ -12,6 +12,11 @@ class TestEncodingDeflate < Test::Unit::TestCase
 
     assert_equal content, Messie::Encoding::Deflate.new(buffer).decode
   end
+
+  def test_from_server
+    page = Messie::Page.crawl "http://localhost:4567/deflate"
+    assert_equal "this is a deflated text", page.body
+  end
 end
 
 
