@@ -10,6 +10,8 @@ options = {
   :only_links => false,
   :only_text => false,
   :only_title => false,
+  :show_response_time => false,
+  :show_response_code => false,
   :headers => {}
 }
 
@@ -40,6 +42,8 @@ optparse = OptionParser.new('Usage: messie [options] url') do |opts|
 
   opts.on('-v', '--verbose', 'verbose mode') do
     options[:verbose] = true
+    options[:show_response_time] = true
+    options[:show_response_code] = true
   end
 
   opts.on('--version') do
@@ -62,6 +66,9 @@ if options[:verbose]
   end
 
   puts ">"
+
+  puts "< Status: #{page.response_code}" if options[:show_response_code]
+  puts "< Response Time: #{page.response_time}" if options[:show_response_time]
 
   page.response_headers.each do |key,value|
     puts "< #{key}: #{value}"
