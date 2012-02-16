@@ -17,6 +17,6 @@ Bones {
   ignore_file  '.gitignore'
   depend_on 'sanitize'
   depend_on 'nokogiri'
-  depend_on 'webrick'
-  depend_on 'sinatra'
+  depend_on 'webrick', :development => true
+  depend_on 'sinatra', :development => true
 }

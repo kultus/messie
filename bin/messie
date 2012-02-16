@@ -1,7 +1,88 @@
 #!/usr/bin/env ruby
 
+require 'optparse'
+
 root = File.expand_path('../..', __FILE__)
 require File.join(root, %w[lib messie])
 
-# Put your code here
+options = {
+  :verbose => false,
+  :only_links => false,
+  :only_text => false,
+  :only_title => false,
+  :show_response_time => false,
+  :show_response_code => false,
+  :headers => {}
+}
 
+ARGV[0] = '-h' if ARGV.length == 0
+
+optparse = OptionParser.new('Usage: messie [options] url') do |opts|
+  opts.on('-h', '--help', 'display this help message') do
+    puts opts
+    exit
+  end
+
+  opts.on('--only-links', 'only print a list of links on the page') do
+    options[:only_links] = true
+  end
+
+  opts.on('--only-text', 'only print a text and remove all HTML tags') do
+    options[:only_text] = true
+  end
+
+  opts.on('--only-title', 'only print the page\'s title') do
+    options[:only_title] = true
+  end
+
+  opts.on('--header HEADER', 'set a custom HTTP header') do |header|
+    header = header.split(':').map {|x| x.strip }
+    options[:headers][header[0]] = header[1]
+  end
+
+  opts.on('-v', '--verbose', 'verbose mode') do
+    options[:verbose] = true
+    options[:show_response_time] = true
+    options[:show_response_code] = true
+  end
+
+  opts.on('--version') do
+    puts "messie #{Messie::VERSION}"
+    exit
+  end
+end
+
+optparse.parse!
+
+page = Messie::Page.crawl ARGV.pop do
+  options[:headers].each do |key,value|
+    add_header key, value
+  end
+end
+
+if options[:verbose]
+  page.request_headers.each do |key,value|
+    puts "> #{key}: #{value}"
+  end
+
+  puts ">"
+
+  puts "< Status: #{page.response_code}" if options[:show_response_code]
+  puts "< Response Time: #{page.response_time}" if options[:show_response_time]
+
+  page.response_headers.each do |key,value|
+    puts "< #{key}: #{value}"
+  end
+
+  puts "<"
+end
+
+if options[:only_links]
+  puts page.links.join("\n")
+elsif options[:only_text]
+  puts page.text
+elsif options[:only_title]
+  puts page.title
+else
+  puts page.body
+end

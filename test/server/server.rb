@@ -4,6 +4,9 @@
 require 'rubygems'
 require 'sinatra'
 
+# external
+require 'zlib'
+
 get '/' do
   '<html><title>Test Page</title></html>'
 end
@@ -35,4 +38,24 @@ get '/redirect' do
   headers \
     "Location" => "http://localhost:4567"
   body "foo"
+end
+
+get '/gzip' do
+  buffer = StringIO.new('')
+  z = Zlib::GzipWriter.new(buffer)
+  z.write("this is a gzipped string")
+  z.close
+
+  headers \
+    "Content-Encoding" => "gzip"
+  body buffer.string
+end
+
+get '/deflate' do
+  zipper = Zlib::Deflate.new
+  buffer = zipper.deflate("this is a deflated text", Zlib::FINISH)
+
+  headers \
+    "Content-Encoding" => "deflate"
+  body buffer
 end

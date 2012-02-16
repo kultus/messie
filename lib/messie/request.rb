@@ -18,7 +18,8 @@ module Messie
         'User-Agent' => Messie::UserAgent.new.to_s,
         'Accept-Charset' => 'utf-8',
         'Accept' => 'text/html,application/xhtml-xml,application/xml',
-        'Cache-Control' => 'max-age=0'
+        'Cache-Control' => 'max-age=0',
+        'Accept-Encoding' => 'gzip,deflate'
       }
 
       @uri = uri
@@ -81,9 +82,9 @@ module Messie
 
       case response
       when Net::HTTPSuccess
-        Messie::Response.create(@uri, response, @response_time)
+        Messie::Response.create(@uri, response, @response_time, @headers)
       when Net::HTTPNotModified
-        Messie::Response.create(@uri, response, @response_time)
+        Messie::Response.create(@uri, response, @response_time, @headers)
       when Net::HTTPRedirection
         @uri = URI.parse(response['location'])
         crawl_and_follow(limit - 1)
