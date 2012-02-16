@@ -1,3 +1,8 @@
+== 0.5.2 / 2012-02-16
+
+* added support for gzip and deflate encoding
+* bin/messie now contains a CLI script, that provides the same parameters as the library
+
 == 0.5.1 / 2012-02-10
 
 * fixed critical bug when retrieving list of links on a page
