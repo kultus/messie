@@ -1,9 +1,6 @@
-$:.unshift(File.join(File.dirname(__FILE__), %w{.. .. .. lib messie}))
+require File.join(File.dirname(__FILE__), %w[.. .. test_messie])
 
-require 'encoding/deflate'
-require 'test/unit'
-
-class TestEncodingDeflate < Test::Unit::TestCase
+class TestEncodingDeflate < Messie::TestCase
   def test_decode
     content = "foobar"
 

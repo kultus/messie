@@ -1,8 +1,6 @@
-$:.unshift(File.join(File.dirname(__FILE__), %w{.. .. lib messie}))
-require 'request'
-require 'test/unit'
+require File.join(File.dirname(__FILE__), %w[.. test_messie])
 
-class TestRequest < Test::Unit::TestCase
+class TestRequest < Messie::TestCase
   def setup
     @request = Messie::Request.new "http://localhost:4567"
   end

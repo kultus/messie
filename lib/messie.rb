@@ -2,7 +2,6 @@ require 'stringio'
 require 'zlib'
 
 module Messie
-
   # :stopdoc:
   LIBPATH = ::File.expand_path('..', __FILE__) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
@@ -59,4 +58,3 @@ module Messie
 end  # module Messie
 
 Messie.require_all_libs_relative_to(__FILE__)
-

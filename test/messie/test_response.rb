@@ -1,8 +1,6 @@
-$:.unshift(File.join(File.dirname(__FILE__), %w{.. .. lib messie}))
-require 'response'
-require 'test/unit'
+require File.join(File.dirname(__FILE__), %w[.. test_messie])
 
-class TestResponse < Test::Unit::TestCase
+class TestResponse < Messie::TestCase
   def test_init
     response = Messie::Response.new {}
 
