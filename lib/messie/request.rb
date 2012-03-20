@@ -3,6 +3,7 @@ $:.unshift(File.dirname(__FILE__))
 # internal
 require 'user_agent'
 require 'response'
+require 'openssl'
 
 module Messie
 
@@ -25,6 +26,7 @@ module Messie
       @uri = uri
       @response = nil
       @response_time = 0
+      @ssl_verify_mode = OpenSSL::SSL::VERIFY_PEER
     end
 
     # get the response of the crawling
@@ -53,6 +55,18 @@ module Messie
       add_header(key, value)
     end
 
+    # sets the cert store to use if requesting HTTPS resources
+    # @param store OpenSSL::X509::Store
+    def ssl_cert_store store
+      @ssl_cert_store = store
+    end
+
+    # set the SSL verify mode, either OpenSSL::SSL::VERIFY_PEER or OpenSSL::SSL::VERIFY_NONE
+    # @param mode
+    def ssl_verify_mode mode
+      @ssl_verify_mode = mode
+    end
+
     private
 
     # crawl the page and follow HTTP redirects
@@ -61,21 +75,22 @@ module Messie
       fail 'http redirect too deep' if limit.zero?
 
       start = Time.new
-      req = Net::HTTP::Get.new(request_path)
+      get_request = Net::HTTP::Get.new(request_path)
 
       # set headers
       @headers.each do |key, value|
-        req[key] = value
+        get_request[key] = value
       end
 
-      response = nil
+      request = Net::HTTP.new(@uri.host, @uri.port)
 
-      http_request = Net::HTTP.new(@uri.host, @uri.port)
-      http_request.use_ssl = @uri.scheme == 'https'
-
-      http_request.start do |http|
-        response = http.request(req)
+      if @uri.scheme == 'https'
+        request.use_ssl = true
+        request.verify_mode = @ssl_verify_mode
+        request.cert_store = @ssl_cert_store
       end
+
+      response = request.request(get_request)
       stop = Time.new
 
       @response_time += stop - start
