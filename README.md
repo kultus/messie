@@ -59,7 +59,6 @@ page.last_modified # => #<Time>
 Requirements
 ------------
 
-* sanitize
 * nokogiri
 
 Install

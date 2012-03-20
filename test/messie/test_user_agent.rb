@@ -1,8 +1,6 @@
-$:.unshift(File.join(File.dirname(__FILE__), %w{.. .. lib messie}))
-require 'user_agent'
-require 'test/unit'
+require File.join(File.dirname(__FILE__), %w[.. test_messie])
 
-class TestUserAgent < Test::Unit::TestCase
+class TestUserAgent < Messie::TestCase
   def setup
     @user_agent = Messie::UserAgent.new
   end

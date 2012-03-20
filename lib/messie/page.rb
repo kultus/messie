@@ -2,7 +2,6 @@ $:.unshift(File.dirname(__FILE__))
 
 # gems
 require 'rubygems'
-require 'sanitize'
 require 'nokogiri'
 
 # external
@@ -63,9 +62,8 @@ module Messie
       doc.xpath('//script').remove
       doc.xpath('//style').remove
 
-      text = doc.to_html.encode_to_utf8
-
-      Sanitize.clean(text).strip
+      text = doc.xpath('//text()').inner_text
+      text.encode_to_utf8.strip
     end
 
     # get the response body

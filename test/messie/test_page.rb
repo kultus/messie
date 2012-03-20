@@ -1,9 +1,7 @@
-$:.unshift(File.join(File.dirname(__FILE__), %w{.. .. lib messie}))
-require 'page'
-require 'test/unit'
+require File.join(File.dirname(__FILE__), %w[.. test_messie])
 require 'time'
 
-class TestPage < Test::Unit::TestCase
+class TestPage < Messie::TestCase
   def setup
     @page = Messie::Page.crawl "http://localhost:4567"
   end
