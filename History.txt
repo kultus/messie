@@ -1,4 +1,4 @@
-== 0.5.3 /
+== 0.5.4 / 2012-03-20
 
 * added handling for the SSL verify_mode, defaults to VERIFY_PEER, but can be switched
 * added ability to inject the OpenSSL cert store into the Request object for custom certificates
