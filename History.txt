@@ -1,7 +1,14 @@
+== 0.5.3 /
+
+* added handling for the SSL verify_mode, defaults to VERIFY_PEER, but can be switched
+* added ability to inject the OpenSSL cert store into the Request object for custom certificates
+* added unit tests for SSL handling
+* removed dependency to the sanitize gem, just using nokogiri instead
+
 == 0.5.2 / 2012-02-16
 
 * added support for gzip and deflate encoding
-* bin/messie now contains a CLI script, that provides the same parameters as the library
+* bin/messie now contains a CLI script that provides the same parameters as the library
 
 == 0.5.1 / 2012-02-10
 
