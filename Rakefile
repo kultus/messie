@@ -15,7 +15,6 @@ Bones {
   email    'liebler.dominik@googlemail.com'
   url      'https://github.com/domnikl/messie'
   ignore_file  '.gitignore'
-  depend_on 'sanitize'
   depend_on 'nokogiri'
   depend_on 'webrick', :development => true
   depend_on 'sinatra', :development => true
