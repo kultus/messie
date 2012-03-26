@@ -9,9 +9,13 @@ require 'plain'
 module Messie
   module Encoding
 
-    # gzipped content
+    # Internal: decodes gzipped content
     #
     class Gzip < Plain
+
+      # Internal: decodes content encoded with the Gzip algorithm
+      #
+      # Returns: a String containing the decoded content
       def decode
         gzip_reader = Zlib::GzipReader.new(StringIO.new(@content))
         gzip_reader.read

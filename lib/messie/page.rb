@@ -15,11 +15,22 @@ require 'request'
 require 'string'
 
 module Messie
+
+  # Public: encapsulates a crawled page
+  #
   class Page
-    # create a new object and crawl the page
+
+    # Public: create a new object and crawl the page
     #
-    def self.crawl uri, &block
-      request = Messie::Request.new uri
+    # uri - a String or URI object
+    # block - a Block that sets headers for the request
+    #
+    # Examples:
+    #   page = Messie::Page.crawl("http://localhost")
+    #
+    # Returns: a new Messie::Page object
+    def self.crawl(uri, &block)
+      request = Messie::Request.new(uri)
 
       if block_given?
         request.instance_eval(&block)
@@ -29,6 +40,14 @@ module Messie
     end
 
     # Public: create a Messie::Page by crawling the given Messie::Request
+    #
+    # request - a Messie::Request object that used to do the request to get the Messie::Page
+    #
+    # Examples:
+    #   request = Messie::Request.new('http://localhost')
+    #   page = Messie::Page.from_request(request)
+    #
+    # Returns: a new Messie::Page object
     def self.from_request(request)
       page = request.crawl.to_h
       page[:uri] ||= uri
@@ -37,11 +56,18 @@ module Messie
       obj
     end
 
-    attr_reader :uri, :response_time
+    attr_reader :uri, :response_time, :request_headers
     attr_writer :body
 
-    # sets a few standard headers, that can be overwritten
+    # Internal: sets a few standard headers, that can be overwritten
     #
+    # data - a Hash containing the following keys:
+    #        :uri - a URI or String object
+    #        :body - a String
+    #        :code - the response code as a Fixnum
+    #        :response_time - the response time in seconds as a Float
+    #        :response_headers - a Hash containing all response headers
+    #        :request_headers - a Hash containing all request headers
     def initialize(data = {})
       if data[:uri].instance_of? String
         @uri = URI.parse(data[:uri])
@@ -56,9 +82,9 @@ module Messie
       @request_headers = data[:request_headers]
     end
 
-    # return plain text of the page
+    # Public: returns plain text of the page (all HTML tags stripped)
     #
-    #
+    # Returns: a String
     def text
       return nil if @body.nil?
 
@@ -70,16 +96,18 @@ module Messie
       text.encode_to_utf8.strip
     end
 
-    # get the response body
-    # 
+    # Public: gets the response body (HTML, binary or whatever the requested resource is)
+    #
+    # Returns: a String
     def body
       return nil if @body.nil?
 
       @body.to_s.strip
     end
 
-    # get all hyperlinks on the page
+    # Public: get all hyperlinks on the page
     #
+    # Returns: an Array containing all hyperlinks of the page
     def links
       return [] if body.nil?
 
@@ -88,49 +116,62 @@ module Messie
       end
     end
 
-    # get the title of the page
+    # Public: get the <title> of the page
     #
+    # Returns: a String
     def title
       nokogiri.xpath('//title').inner_html
     end
 
-    # get a nokogiri object of the page's body
+    # Public: get a nokogiri object of the page's body
     #
+    # Returns: a Nokogiri::HTML::Document representation of the page
     def nokogiri
       Nokogiri::HTML(body)
     end
 
-    # get the response code
+    # Public: gets the response code
     #
-    # :call-seq:
-    #
+    # Returns: a valid HTTP status code as a Fixnum
     def response_code
       @code
     end
 
-    # last modified timestamp
+    # Public: gets the last modified timestamp if given in the response
+    #
+    # Returns: a Time object
     def last_modified
       return nil unless self[:last_modified]
       Time.parse(self[:last_modified])
     end
 
-    # Entity Tag
+    # Public: gets the ETag if set in the response
+    #
+    # Returns: a String or nil
     def etag
       self[:etag]
     end
 
-    # is the page cached on the server?
+    # Public: is the page cached on the server?
+    #
+    # Returns: either TrueClass or FalseClass
     def cached?
       last_modified || etag
     end
 
-    # was the page modified since the last request to it?
-    # => HTTP Status 304 Not Modified?
+    # Public: was the page modified since the last request to it?
+    #         => HTTP Status 304 Not Modified?
+    #
+    # Returns: either TrueClass or FalseClass
     def changed?
       return nil if @code.nil?
       @code != 304
     end
 
+    # Public: returns the HTTP response headers
+    #
+    # Returns: a Hash containing the response headers like they appeared in
+    #          the HTTP response (User-Agent)
     def response_headers
       headers = {}
       @response_headers.each do |key,value|
@@ -141,24 +182,18 @@ module Messie
       headers
     end
 
-    def request_headers
-      @request_headers
-    end
+    private
 
-    protected
-
-    # get ALL links from the body section of the page
+    # Internal: get all links from the page
     #
+    # Returns: an Array of links
     def find_links
-      links = []
-      nokogiri.xpath('//a').each do |link|
-        links << link['href'] if link['href']
-      end
-
-      links
+      nokogiri.xpath('//a').select { |link| link['href'] }.map { |link| link['href'] }
     end
 
-    # read headers
+    # Internal: reads headers with an Array-like syntax
+    #
+    # Returns: a String
     def [](header_key)
       return nil if @response_headers.nil?
       return nil unless @response_headers.has_key? header_key

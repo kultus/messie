@@ -9,9 +9,13 @@ require 'plain'
 module Messie
   module Encoding
 
-    # deflated content
+    # Internal: decodes deflated content
     #
     class Deflate < Plain
+
+      # Internal: decodes content encoded with the DEFLATE algorithm
+      #
+      # Returns: the decoded String
       def decode
         stream = Zlib::Inflate.new
         buffer = stream.inflate(@content)
