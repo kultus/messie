@@ -19,13 +19,17 @@ module Messie
     # create a new object and crawl the page
     #
     def self.crawl uri, &block
-      uri = URI.parse(uri)
       request = Messie::Request.new uri
 
       if block_given?
         request.instance_eval(&block)
       end
 
+      self.from_request(request)
+    end
+
+    # Public: create a Messie::Page by crawling the given Messie::Request
+    def self.from_request(request)
       page = request.crawl.to_h
       page[:uri] ||= uri
 

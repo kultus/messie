@@ -95,4 +95,11 @@ class TestPage < Messie::TestCase
     page = Messie::Page.crawl "http://localhost:4567/cached"
     assert !page.changed?
   end
+
+  def test_from_request
+    request = Messie::Request.new('http://localhost:4567')
+    page = Messie::Page.from_request(request)
+
+    assert_equal 'Test Page', page.title
+  end
 end

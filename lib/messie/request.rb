@@ -4,6 +4,7 @@ $:.unshift(File.dirname(__FILE__))
 require 'user_agent'
 require 'response'
 require 'openssl'
+require 'uri'
 
 module Messie
 
@@ -14,6 +15,9 @@ module Messie
 
     # init request and set standard parameters
     #
+    # uri - a String or URI object to be crawled
+    #
+    # Returns: a new Messie::Request object
     def initialize uri
       @headers = {
         'User-Agent' => Messie::UserAgent.new.to_s,
@@ -23,10 +27,18 @@ module Messie
         'Accept-Encoding' => 'gzip,deflate'
       }
 
-      @uri = uri
+      self.uri = uri
       @response = nil
       @response_time = 0
       @ssl_verify_mode = OpenSSL::SSL::VERIFY_PEER
+    end
+
+    # Public: sets the URI to be requested
+    #
+    # uri - a String or URI
+    def uri=(uri)
+      uri = URI.parse(uri) unless uri.kind_of? URI
+      @uri = uri
     end
 
     # get the response of the crawling
@@ -41,7 +53,7 @@ module Messie
 
     # set a HTTP request header
     #
-    def add_header key, value
+    def add_header(key, value)
       @headers[key] = value
     end
 
