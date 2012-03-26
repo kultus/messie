@@ -1,3 +1,4 @@
+# external
 require 'stringio'
 require 'zlib'
 
