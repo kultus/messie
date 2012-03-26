@@ -18,13 +18,13 @@ module Messie
   #   request.user_agent('foobar_user_agent_1.0')
   #   response = request.crawl
   class Request
-
     attr_reader :headers, :uri
 
     # Public: inits the request and sets standard parameters
     #
     # uri - a String or URI object to be crawled
-    def initialize uri
+    # request - an optional Net::HTTPRequest object
+    def initialize(uri, request = nil)
       @headers = {
         'User-Agent' => Messie::UserAgent.new.to_s,
         'Accept-Charset' => 'utf-8',
@@ -37,6 +37,9 @@ module Messie
       @response = nil
       @response_time = 0
       @ssl_verify_mode = OpenSSL::SSL::VERIFY_PEER
+
+      request ||= Net::HTTP.new(@uri.host, @uri.port)
+      @request = request
     end
 
     # Public: sets the URI to be requested
@@ -112,9 +115,8 @@ module Messie
     #
     # Returns: a Messie::Response object
     def crawl_and_follow(limit = 5)
-      fail 'http redirect too deep' if limit.zero?
+      fail 'HTTP redirect too deep' if limit.zero?
 
-      start = Time.new
       get_request = Net::HTTP::Get.new(request_path)
 
       # set headers
@@ -122,18 +124,16 @@ module Messie
         get_request[key] = value
       end
 
-      request = Net::HTTP.new(@uri.host, @uri.port)
-
       if @uri.scheme == 'https'
-        request.use_ssl = true
-        request.verify_mode = @ssl_verify_mode
-        request.cert_store = @ssl_cert_store
+        @request.use_ssl = true
+        @request.verify_mode = @ssl_verify_mode
+        @request.cert_store = @ssl_cert_store
       end
 
-      response = request.request(get_request)
-      stop = Time.new
+      start = Time.new
+      response = @request.request(get_request)
 
-      @response_time += stop - start
+      @response_time += Time.new - start
 
       case response
       when Net::HTTPSuccess
@@ -152,12 +152,8 @@ module Messie
     #
     # Returns: a String describing the request path
     def request_path
-      if @uri.path.length == 0
-        '/'
-      else
-        @uri.path
-      end
+      return '/' if @uri.path.length == 0
+      @uri.path
     end
-
   end
 end

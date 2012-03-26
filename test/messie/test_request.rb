@@ -1,8 +1,18 @@
 require File.join(File.dirname(__FILE__), %w[.. test_messie])
+require 'net/http'
 
 class TestRequest < Messie::TestCase
   def setup
     @request = Messie::Request.new "http://localhost:4567"
+  end
+
+  def test_create
+    uri = URI.parse("http://localhost:4567/")
+    request = Net::HTTP.new(uri.host, uri.port)
+    request = Messie::Request.new(uri, request)
+    page = Messie::Page.from_request(request)
+
+    assert_equal 'Test Page', page.title
   end
 
   def test_headers
