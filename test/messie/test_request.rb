@@ -6,13 +6,18 @@ class TestRequest < Messie::TestCase
     @request = Messie::Request.new "http://localhost:4567"
   end
 
-  def test_create
+  def test_inject_http_request
     uri = URI.parse("http://localhost:4567/")
-    request = Net::HTTP.new(uri.host, uri.port)
-    request = Messie::Request.new(uri, request)
-    page = Messie::Page.from_request(request)
+    net_request = Net::HTTP.new(uri.host, uri.port)
 
+    request = Messie::Request.new(uri, net_request)
+    page = Messie::Page.from_request(request)
     assert_equal 'Test Page', page.title
+
+    # second crawl request, reusing the Net::HTTP object
+    request2 = Messie::Request.new("http://localhost:4567/deflate", net_request)
+    page2 = Messie::Page.from_request(request2)
+    assert_equal "this is a deflated text", page2.body
   end
 
   def test_headers
