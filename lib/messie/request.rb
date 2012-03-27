@@ -174,8 +174,7 @@ module Messie
     # Returns: a Net::HTTP object
     def build_request(uri)
       uri = URI.parse(uri) unless uri.kind_of? URI
-      request = Net::HTTP.new(uri.host, uri.port)
-      request
+      Net::HTTP.new(uri.host, uri.port)
     end
   end
 end
