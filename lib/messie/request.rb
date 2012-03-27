@@ -38,7 +38,7 @@ module Messie
       @response_time = 0
       @ssl_verify_mode = OpenSSL::SSL::VERIFY_PEER
 
-      request ||= Net::HTTP.new(@uri.host, @uri.port)
+      request ||= build_request(@uri)
       @request = request
     end
 
@@ -111,10 +111,11 @@ module Messie
 
     # Internal: crawls the page and follows HTTP redirects (if any)
     #
+    # request - a Net::HTTP object to be used to do the request
     # limit - a Fixnum counting the max HTTP redirects
     #
     # Returns: a Messie::Response object
-    def crawl_and_follow(limit = 5)
+    def crawl_and_follow(request = nil, limit = 5)
       fail 'HTTP redirect too deep' if limit.zero?
 
       get_request = Net::HTTP::Get.new(request_path)
@@ -124,14 +125,16 @@ module Messie
         get_request[key] = value
       end
 
+      request ||= @request
+
       if @uri.scheme == 'https'
-        @request.use_ssl = true
-        @request.verify_mode = @ssl_verify_mode
-        @request.cert_store = @ssl_cert_store
+        request.use_ssl = true
+        request.verify_mode = @ssl_verify_mode
+        request.cert_store = @ssl_cert_store
       end
 
       start = Time.new
-      response = @request.request(get_request)
+      response = request.request(get_request)
 
       @response_time += Time.new - start
 
@@ -142,14 +145,15 @@ module Messie
         Messie::Response.create(@uri, response, @response_time, @headers)
       when Net::HTTPRedirection
         new_uri = URI.parse(response['location'])
+
+        # sets a new individual Net::HTTP object to be used as the requester
+        if @uri.host != new_uri.host or @uri.port != new_uri.port
+          request = build_request(new_uri)
+        end
+
+        @uri = new_uri
 	
-	if @uri.host != new_uri.host or @uri.port != new_uri.port
-	  @request = Net::HTTP.new(new_uri.host, new_uri.port)
-	end
-	
-	@uri = new_uri
-	
-        crawl_and_follow(limit - 1)
+        crawl_and_follow(request, limit - 1)
       else
         response.error!
       end
@@ -161,6 +165,17 @@ module Messie
     def request_path
       return '/' if @uri.path.length == 0
       @uri.path
+    end
+
+    # Internal: creates a new Net::HTTP object
+    #
+    # uri - a String or URI object
+    #
+    # Returns: a Net::HTTP object
+    def build_request(uri)
+      uri = URI.parse(uri) unless uri.kind_of? URI
+      request = Net::HTTP.new(uri.host, uri.port)
+      request
     end
   end
 end
