@@ -141,7 +141,14 @@ module Messie
       when Net::HTTPNotModified
         Messie::Response.create(@uri, response, @response_time, @headers)
       when Net::HTTPRedirection
-        @uri = URI.parse(response['location'])
+        new_uri = URI.parse(response['location'])
+	
+	if @uri.host != new_uri.host or @uri.port != new_uri.port
+	  @request = Net::HTTP.new(new_uri.host, new_uri.port)
+	end
+	
+	@uri = new_uri
+	
         crawl_and_follow(limit - 1)
       else
         response.error!
