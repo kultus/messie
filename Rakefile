@@ -36,4 +36,5 @@ Bones {
   depend_on 'nokogiri'
   depend_on 'webrick', :development => true
   depend_on 'sinatra', :development => true
+  depend_on 'simplecov', :development => true
 }
