@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Messie : a small layer over Ruby's Net::HTTP(S)" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Messie</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/domnikl/messie">Fork Me on GitHub</a>
+
+          <h1 id="project_title">Messie</h1>
+          <h2 id="project_tagline">a small layer over Ruby's Net::HTTP(S)</h2>
+
+          <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/domnikl/messie/zipball/master">Download this project as a .zip file</a>
+            <a class="tar_download_link" href="https://github.com/domnikl/messie/tarball/master">Download this project as a tar.gz file</a>
+          </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>Features</h2>
+
+<ul>
+<li>follows HTTP redirects (max 5 levels deep)</li>
+<li>get all links a page contains to continue crawling recursively</li>
+<li>supports caching of pages</li>
+<li>decompression of gzip or deflate compressed is completely handled by messie</li>
+<li>return plain text from web pages</li>
+<li>crawl SSL encrypted pages</li>
+<li>set your own request headers via a fancy API</li>
+<li>directly access the page's content with Nokogiri</li>
+<li>records the response time of every crawled page</li>
+<li>contains a CLI tool that uses the complete API</li>
+</ul><h2>Examples</h2>
+
+<div class="highlight">
+<pre><span class="n">page</span> <span class="o">=</span> <span class="no">Messie</span><span class="o">::</span><span class="no">Page</span><span class="o">.</span><span class="n">crawl</span> <span class="s2">"<a href="http://www.google.de">http://www.google.de</a>"</span> <span class="k">do</span>
+    <span class="c1"># these respond to method_missing, so any header key</span>
+    <span class="c1"># might be allowed here</span>
+
+    <span class="n">accept_charset</span> <span class="s1">'utf-8'</span>
+    <span class="n">accept</span> <span class="s1">'text/html'</span>
+<span class="k">end</span>
+
+<span class="n">page</span><span class="o">.</span><span class="n">response_code</span> <span class="c1"># =&gt; 200</span>
+<span class="n">page</span><span class="o">.</span><span class="n">response_time</span> <span class="c1"># =&gt; 0.83234</span>
+<span class="n">page</span><span class="o">.</span><span class="n">body</span>          <span class="c1"># =&gt; "&lt;html&gt;&lt;title&gt;foo&lt;/title&gt;... &lt;h1&gt;Foobar&lt;/h1&gt;"</span>
+<span class="n">page</span><span class="o">.</span><span class="n">text</span>          <span class="c1"># =&gt; "Foobar ..."</span>
+<span class="n">page</span><span class="o">.</span><span class="n">title</span>         <span class="c1"># =&gt; foo</span>
+<span class="n">page</span><span class="o">.</span><span class="n">links</span>         <span class="c1"># =&gt; ['<a href="http://www.google.com">http://www.google.com</a>', '<a href="http://www.foobar.com'">http://www.foobar.com'</a>]</span>
+<span class="n">page</span><span class="o">.</span><span class="n">nokogiri</span>      <span class="c1"># =&gt; &lt;Nokogiri::Document&gt;</span>
+</pre>
+</div>
+
+
+<h2>Caching</h2>
+
+<p>When it comes to caching pages, messie takes a lot of work from you. All you have to do is to persist
+<code>page.last_modified</code> and <code>page.etag</code> and provide them on your next call to <code>Messie::Page.crawl</code>.</p>
+
+<div class="highlight">
+<pre><span class="n">page</span> <span class="o">=</span> <span class="no">Messie</span><span class="o">::</span><span class="no">Page</span><span class="o">.</span><span class="n">crawl</span> <span class="s2">"<a href="http://www.google.de">http://www.google.de</a>"</span> <span class="k">do</span>
+  <span class="n">if_modified_since</span> <span class="no">Time</span><span class="o">.</span><span class="n">now</span>
+  <span class="n">if_none_match</span> <span class="s2">"1edec-3e3073913b101"</span>
+<span class="k">end</span>
+
+<span class="n">page</span><span class="o">.</span><span class="n">changed?</span> <span class="c1"># =&gt; false</span>
+<span class="n">page</span><span class="o">.</span><span class="n">cached?</span> <span class="c1"># =&gt; true, the resource is being cached by the server</span>
+<span class="n">page</span><span class="o">.</span><span class="n">etag</span> <span class="c1"># =&gt; "1edec-3e3073913b101"</span>
+<span class="n">page</span><span class="o">.</span><span class="n">last_modified</span> <span class="c1"># =&gt; #&lt;Time&gt;</span>
+</pre>
+</div>
+
+
+<h2>Requirements</h2>
+
+<ul>
+<li>nokogiri</li>
+</ul><h2>Install</h2>
+
+<ul>
+<li><code>[sudo] gem install messie</code></li>
+</ul><h2>Author</h2>
+
+<p>Original author: Dominik Liebler <a href="mailto:liebler.dominik@googlemail.com">liebler.dominik@googlemail.com</a></p>
+
+<h2>License</h2>
+
+<p>(The MIT License)</p>
+
+<p>Copyright (c) 2012 Dominik Liebler</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Messie maintained by <a href="https://github.com/domnikl">domnikl</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-9816149-13");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
