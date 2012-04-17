@@ -31,7 +31,7 @@ Bones {
   name     'messie'
   authors  'Dominik Liebler'
   email    'liebler.dominik@googlemail.com'
-  url      'https://github.com/domnikl/messie'
+  url      'https://domnikl.github.com/messie'
   ignore_file  '.gitignore'
   depend_on 'nokogiri'
   depend_on 'webrick', :development => true
