@@ -1,10 +1,8 @@
-messie
-===========
+# messie
 
 Messie is a simple web crawler that crawls one page at a time.
 
-Features
---------
+## Features
 
 * follows HTTP redirects (max 5 levels deep)
 * get all links a page contains to continue crawling recursively
@@ -17,8 +15,7 @@ Features
 * records the response time of every crawled page
 * contains a CLI tool that uses the complete API
 
-Examples
---------
+## Examples
 
 ```ruby
 page = Messie::Page.crawl "http://www.google.de" do
@@ -38,8 +35,7 @@ page.links         # => ['http://www.google.com', 'http://www.foobar.com']
 page.nokogiri      # => <Nokogiri::Document>
 ```
 
-Caching
-=======
+## Caching
 
 When it comes to caching pages, messie takes a lot of work from you. All you have to do is to persist
 `page.last_modified` and `page.etag` and provide them on your next call to `Messie::Page.crawl`.
@@ -56,23 +52,19 @@ page.etag # => "1edec-3e3073913b101"
 page.last_modified # => #<Time>
 ```
 
-Requirements
-------------
+## Requirements
 
 * nokogiri
 
-Install
--------
+## Install
 
 * `[sudo] gem install messie`
 
-Author
-------
+## Author
 
 Original author: Dominik Liebler <liebler.dominik@googlemail.com>
 
-License
--------
+## License
 
 (The MIT License)
 
